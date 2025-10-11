@@ -1,0 +1,71 @@
+<div class="bg-white p-8 rounded-xl shadow-lg h-full">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">Todas las Notificaciones</h2>
+    <p class="text-sm text-gray-500 mb-6">
+        Revisa tu historial completo de alertas y eventos. Puedes usar los filtros para encontrar notificaciones específicas y marcar las no leídas.
+    </p>
+
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 border-b border-gray-100 pb-4">
+        
+        <button class="px-4 py-2 bg-[#a2aadb] text-white font-medium text-sm rounded-lg hover:bg-[#8f96c1] mb-4 md:mb-0 transition-colors">
+            <div class="flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-mail-opened"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7.5l7 4.5l-7 4.5v-9z" /><path d="M21 7.5l-7 4.5l7 4.5v-9z" /><path d="M7 16.5l5 3l5 -3" /></svg>
+                <span>Marcar todas como leídas</span>
+            </div>
+        </button>
+
+        <div class="flex items-center space-x-4">
+            <label for="filter-type" class="text-sm font-medium text-gray-700">Filtrar por:</label>
+            
+            <div class="w-48"> 
+                <select id="filter-type" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] w-full">
+                    <option value="all">Todas</option>
+                    <option value="role">Solicitudes de Rol</option>
+                    <option value="recipe">Recetas Subidas</option>
+                    <option value="system">Alertas del Sistema</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
+
+        <div class="p-4 rounded-lg flex justify-between items-center border border-gray-200 bg-[#f7f8fe]">
+            <div class="flex items-start space-x-4 flex-1">
+                <div class="flex-shrink-0 mt-0.5 text-[#a2aadb]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path><path d="M6 21v-2a4 4 0 0 1 4 -4h3.5"></path><path d="M19 22v.01"></path><path d="M19 19a2.003 2.003 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483"></path></svg>
+                </div>
+                <div class="flex-grow">
+                    <p class="text-base font-semibold text-gray-800 leading-snug">
+                        Nueva solicitud de rol de User 1.
+                    </p>
+                    <p class="text-sm text-gray-500 mt-0.5">Pendiente de revisión en la sección de solicitudes para cambio de rol.</p>
+                </div>
+            </div>
+            
+            <div class="flex-shrink-0 text-right">
+                <span class="text-xs text-[#a2aadb] font-bold block">¡NUEVA!</span>
+                <span class="text-xs text-gray-500 block">hace 5 minutos</span>
+            </div>
+        </div>
+
+        <div class="p-4 rounded-lg flex justify-between items-center border border-gray-200 bg-white">
+            <div class="flex items-start space-x-4 flex-1">
+                <div class="flex-shrink-0 mt-0.5 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-file-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path><path d="M12 11l0 6"></path><path d="M9 14l6 0"></path></svg>
+                </div>
+                <div class="flex-grow">
+                    <p class="text-base font-medium text-gray-700 leading-snug">
+                        Receta "Tarta de Limón" subida por Chef Admin.
+                    </p>
+                    <p class="text-sm text-gray-500 mt-0.5">Hace 3 horas</p>
+                </div>
+            </div>
+            
+            <div class="flex-shrink-0 text-right">
+                 <span class="text-xs text-gray-400 font-medium block">Leída</span>
+                <span class="text-xs text-gray-500 block">hace 3 horas</span>
+            </div>
+        </div>
+        
+        </div>
+</div>

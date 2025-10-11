@@ -1,0 +1,105 @@
+<div class="bg-white p-8 rounded-xl shadow-lg h-full text-[#2b2d2f]">
+  <h2 class="text-xl font-semibold text-gray-800 mb-2">Perfil</h2>
+  <p class="text-sm text-gray-500 mb-8">Aquí puedes visualizar y editar tu información.</p>
+
+  <div class="flex space-x-8 px-4">
+    <div class="w-2/4">
+        <div class="p-4 bg-transparent">
+            <img src="https://i.pinimg.com/736x/60/5a/66/605a6680015c6de804504e583ceb54ba.jpg" alt="Jess JH" class="w-full h-full object-cover border-5 border-[#a2aadb] rounded-full mb-2">
+            <div class="flex flex-col items-center text-center"> 
+                <p class="font-semibold text-[#2b2d2f]">Jess JH</p>
+                <span class="px-2 flex text-xs leading-5 font-semibold rounded-full bg-[#a2aadb] text-white my-1">
+                    Admin
+                </span>
+                <small class="text-xs text-gray-500">@Iceli</small> 
+            </div>
+        </div>
+    </div>
+
+    <div class="w-5/4">
+        <div class="grid grid-cols-1 gap-6">
+            <div>
+                <label class="text-sm font-medium text-gray-700">Nombre(s)</label>
+                <input type="text" placeholder="ej. Tyler" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Apellido (s)</label>
+                <input type="text" placeholder="ej. Joseph" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Username</label>
+                <input type="text" placeholder="ej. tylerrjoseph" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
+                <input type="email" placeholder="ej. prueba123@gmail.com" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+            </div>
+
+            <div>
+                <label class="text-sm font-medium text-gray-700">Género</label>
+                    <select class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                    <option hidden disabled selected value="">Seleccionar</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="39 tipos de gays">39 tipos de gays🏳️‍🌈</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-2 gap-6">
+            <button (click)="confirmChanges()" type="button" class="p-2 bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
+                Actualizar información
+            </button>
+
+            <button type="button" (click)="openModal()" class="p-2 bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
+                Cambiar contraseña
+            </button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR CONTRASEÑA -->
+<div *ngIf="isModalOpen()" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-black/40 transition-opacity" (click)="closeModal()"></div>
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="relative bg-white rounded-lg shadow-xl transform transition-all sm:w-96 sm:max-w-3xl">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-xl font-semibold text-gray-800" id="modal-title">
+                   Cambiar contraseña
+                </h3>
+                <button (click)="closeModal()" class="text-gray-400 hover:text-[#8e3535] focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M18 6l-12 12"></path>
+                        <path d="M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                <div class="space-y-5">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Nueva contraseña</label>
+                        <input type="password" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                    </div>
+
+                    <div> 
+                        <label class="text-sm font-medium text-gray-700">Confirmar nueva contraseña</label>
+                        <input type="password" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 flex justify-center space-x-3 rounded-b-lg">
+                <button type="button" class="p-3 text-sm bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
+                    Cambiar contraseña
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
