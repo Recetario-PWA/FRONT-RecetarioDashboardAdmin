@@ -1,1 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-quicksand: "Quicksand", sans-serif; 
+}
+
+select, ::picker(select) {
+    appearance: base-select;
+}
+
+select::picker-icon {
+  color: #6b6f73;
+  content: url("/icons/chevron-down.svg");
+  width: 20px;
+  height: 20px;
+}
+
+select:open::picker-icon {
+  content: url("/icons/chevron-up.svg");
+  width: 20px;
+  height: 20px;
+}
+
+::picker(select) {
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background-color: #f1f4f6;
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  color: #2b2d2f;
+}
+
+select option {
+  padding: 5px;
+}
+
+select option:hover {
+  background-color: #a2aadb;
+  color: white;
+}
+
+select option:checked {
+  background-color: #a2aadb;
+  color: white;
+}
+
+select option::checkmark {
+  color: white;
+  content: "🍩";
+}
