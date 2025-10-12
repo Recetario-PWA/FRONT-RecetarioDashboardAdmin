@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, QueryList, ViewChildren } from '@angular/core';
+import { Component, ElementRef, QueryList, signal, ViewChildren } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { codeEmail } from '../../../../core/stores/auth.store';
+import { Auth } from '../../../../core/services/auth';
+import { HttpErrorResponse } from '@angular/common/http';
+import Swal from 'sweetalert2';
+import { take, TimeoutError } from 'rxjs';
 
 @Component({
   selector: 'app-auth-code',
@@ -11,13 +16,20 @@ import { RouterModule } from '@angular/router';
   standalone: true,
 })
 export class AuthCode {
+  email!: any;
   code: string[] = ['', '', '', '', '']; 
   codeDigits = Array(5).fill(0);
+  loading = signal(false);
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>; 
 
-  constructor() {}
+  constructor(private authService: Auth, private router: Router) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const email = codeEmail();
+
+    this.email = email;
+    codeEmail.set(null);
+  }
 
   onInputChange(index: number, event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -62,11 +74,131 @@ export class AuthCode {
 
   onSubmit(): void {
     const fullCode = this.code.join('');
-    
-    if (fullCode.length === this.code.length) {
-      console.log('Código completo para verificar:', fullCode);
+
+    if (fullCode.length === this.code.length){
+      this.authService.verifyCode(this.email, fullCode).subscribe({
+        next: (response) => {
+          if (response.result) {
+            this.authService.saveToken(response.data.token);
+          
+            this.authService.getUserInfo().subscribe(user => {
+              if (user.data.rol.role === "admin") {
+                setTimeout(() => {
+                  this.clearCodeInputs();
+                  this.router.navigate(['/']);
+                });
+              } else {
+                this.clearCodeInputs();
+                Swal.fire({
+                  title: 'Error',
+                  html: 'No tienes permiso para ingresar',
+                  icon: 'error',
+                  confirmButtonColor: "#a2aadb",
+                  confirmButtonText: 'Aceptar'
+                }).then(() => {
+                  this.router.navigate(['/login']);
+                });
+              }
+            });
+          }
+        },
+        error: (error: HttpErrorResponse | TimeoutError) => {
+          if (error instanceof TimeoutError) {
+            this.onSubmit();
+            return;
+          }
+
+          const httpError = error as HttpErrorResponse;
+
+          const serverMsg = httpError.error?.msg || 'Ha ocurrido un error inesperado. (Error 404/500)';
+          const data = httpError.error?.data as Record<string, any> | undefined;
+
+          let htmlMsg = '';
+
+          if (data) {
+            const validationMessages = ([] as string[]).concat(
+              ...Object.values(data)
+            );
+
+            if (validationMessages.length > 0) {
+              htmlMsg = validationMessages.map(err => `* ${err}`).join('<br>');
+            }
+          }
+
+          Swal.fire({
+            title: 'Error',
+            html: htmlMsg || serverMsg,
+            icon: 'error',
+            confirmButtonColor: "#a2aadb",
+            confirmButtonText: 'Aceptar'
+          });
+
+          this.clearCodeInputs();
+          this.loading.set(false);
+        }
+      });
     } else {
-      console.error('El código está incompleto.');
+      
     }
+  }
+
+  resendCode() { 
+    console.log('resendCode', this.email);
+    this.authService.resendCode(this.email).pipe(take(1)).subscribe({
+      next: (response) => { 
+        Swal.fire({
+          title: '¡Código Reenviado!',
+          text: 'Hemos enviado un nuevo código de verificación a tu correo electrónico. Recuerda revisar la bandeja de entrada o spam.',
+          icon: 'success',
+          confirmButtonColor: "#a2aadb",
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          this.clearCodeInputs();
+        });
+      },
+      error: (error: HttpErrorResponse) => {
+        const httpError = error as HttpErrorResponse;
+
+        const serverMsg = httpError.error?.msg || 'Ha ocurrido un error inesperado. (Error 404/500)';
+        const data = httpError.error?.data as Record<string, any> | undefined;
+
+        let htmlMsg = '';
+
+        if (data) {
+          const validationMessages = ([] as string[]).concat(
+            ...Object.values(data)
+          );
+
+          if (validationMessages.length > 0) {
+            htmlMsg = validationMessages.map(err => `* ${err}`).join('<br>');
+          }
+        }
+
+        Swal.fire({
+          title: 'Error',
+          html: htmlMsg || serverMsg,
+          icon: 'error',
+          confirmButtonColor: "#a2aadb",
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
+  }
+
+  clearCodeInputs(): void {
+    this.code = ['', '', '', '', ''];
+    
+    if (this.inputFields) {
+      this.inputFields.forEach(inputRef => {
+        inputRef.nativeElement.value = '';
+      });
+      
+      this.inputFields.first.nativeElement.focus();
+    }
+  }
+
+  
+  ngOnDestroy(): void {
+    
   }
 }

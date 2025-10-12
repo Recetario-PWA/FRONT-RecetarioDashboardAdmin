@@ -1,0 +1,88 @@
+import { HttpClient } from '@angular/common/http';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { Observable, tap } from 'rxjs';
+import { currentUser, userInfoLoading } from '../stores/auth.store';
+import { isPlatformBrowser } from '@angular/common';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class Auth {
+  private baseUrl: string;
+  private token: string | null = null;
+  private isBrowser: boolean;
+
+  constructor(private httpClient: HttpClient, @Inject(PLATFORM_ID) private platformId: Object){
+    this.baseUrl = `${environment.apiUrlBase}auth/`;
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
+
+  login(loginData: any): Observable<any>{
+    return this.httpClient.post(`${this.baseUrl}login`, loginData);
+  }
+
+  register(registerData: any): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}register`, registerData);
+  }
+
+  verifyCode(email: any, code: any): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}code`, { email: email, code: code });
+  }
+
+  saveToken(token: string) {
+    if (this.isBrowser) {
+      localStorage.setItem('auth_token', token);
+    }
+  }
+
+  getToken() {
+    if (this.isBrowser) {
+      this.token = localStorage.getItem('auth_token');
+    } else {
+      this.token = null;
+    }
+
+    return this.token;
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  getUserInfo(): Observable<any> {
+    userInfoLoading.set(true);
+    return this.httpClient.get<any>(`${this.baseUrl}about-me`).pipe(
+      tap({
+        next: (response) => {
+          if (response.result) {
+            currentUser.set(response.data);
+          } else {
+            currentUser.set(null);
+          }
+          userInfoLoading.set(false);
+        },
+        error: () => {
+          currentUser.set(null);
+          userInfoLoading.set(false);
+        }
+      })
+    );
+  }
+
+  resendCode(email: any): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}resend-code`, {email: email});
+  }
+
+  logout(): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}logout`, '').pipe(
+      tap(() => {
+        if (this.isBrowser) {
+          localStorage.removeItem('auth_token');
+          this.token = null;
+          currentUser.set(null);
+        }
+      })
+    );
+  }  
+}

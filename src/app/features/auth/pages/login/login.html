@@ -7,19 +7,40 @@
             <div class="py-4">
                 <span class="mb-2 text-md">Correo electronico</span>
                 <input type="email" formControlName="email" class="mt-2 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] w-full py-2 px-3 bg-[#f1f4f6] rounded-md placeholder:font-light placeholder:text-gray-500" placeholder="ejemplo@gmail.com"/>
+                <app-error-messages [control]="getControl('email')" label="Este campo"></app-error-messages>
             </div>
             <div class="py-4">
                 <span class="mb-2 text-md">Contraseña</span>
-                <input type="password" formControlName="password" class="mt-2 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] w-full py-2 px-3 bg-[#f1f4f6] rounded-md placeholder:font-light placeholder:text-gray-500"/>
+                <div class="relative">
+                <input
+                  [type]="passwordVisible() ? 'text' : 'password'"
+                  formControlName="password"
+                  class="mt-2 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] w-full py-2 pl-3 pr-10 bg-[#f1f4f6] rounded-md placeholder:font-light placeholder:text-gray-500"
+                />
+                <button
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  class="absolute right-0 top-0 mt-4 mr-3 text-gray-500 hover:text-[#a2aadb] transition-colors"
+                  aria-label="Toggle password visibility"
+                >
+                  <ng-container *ngIf="passwordVisible(); else hidePasswordIcon">
+                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye-closed"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4" /><path d="M3 15l2.5 -3.8" /><path d="M21 14.976l-2.492 -3.776" /><path d="M9 17l.5 -4" /><path d="M15 17l-.5 -4" /></svg>
+                  </ng-container>
+                  <ng-template #hidePasswordIcon>
+                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                  </ng-template>
+                </button>
+              </div>
+              <app-error-messages [control]="getControl('password')" label="Este campo"></app-error-messages>
             </div>
-            <button type="submit" class="mt-3 w-full font-bold bg-[#a2aadb] text-white p-2 rounded-lg mb-6 hover:bg-[#8f96c1]">
+            <button [disabled]="loading()" type="submit" class="mt-4 w-full font-bold bg-[#a2aadb] text-white p-2 rounded-lg mb-6 hover:bg-[#8f96c1] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#a2aadb]">
                 Iniciar sesión
             </button>
           </form>
-          <div class="text-center text-[#2b2d2f]">
+         <!-- <div class="text-center text-[#2b2d2f]">
             ¿Eres nuevo?
             <a routerLink="/register" class="font-bold text-[#a2aadb]">Registrate aquí</a>
-          </div>
+          </div> -->
         </div>
         <div class="relative">
           <img src="https://recetariopwa.sfo3.digitaloceanspaces.com/bassemsaad-saad-Me3xCGdlYl4-unsplash.jpg" alt="img" class="w-[400px] h-full hidden rounded-r-2xl md:block object-cover"/>
