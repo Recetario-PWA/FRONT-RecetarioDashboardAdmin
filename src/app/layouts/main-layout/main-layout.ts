@@ -1,28 +1,37 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, signal, ViewChild } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { Component, computed, ElementRef, HostListener, signal, ViewChild } from '@angular/core';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { currentUser, hasUnreadNotifications, notificationsAdmin, unreadNotifications } from '../../core/stores/auth.store';
+import { Auth } from '../../core/services/auth';
+import { HttpErrorResponse } from '@angular/common/http';
+import { TimeoutError } from 'rxjs';
+import Swal from 'sweetalert2';
+import { TimeAgoPipe } from '../../core/pipes/time-ago-pipe';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [CommonModule, RouterOutlet, RouterModule],
+  imports: [CommonModule, RouterOutlet, RouterModule, TimeAgoPipe],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
   standalone: true,
 })
 export class MainLayout {
   fechaHoy: string = '';
+  unreadNotis = computed(() => hasUnreadNotifications());
   saludo: string = '';
   isOpenNotifications = signal(false);
   isOpenProfile = signal(false);
+  user = computed(() => currentUser());
+  notis = computed(() => unreadNotifications());
 
   @ViewChild('notificationsContainer') notificationsContainer!: ElementRef;
   @ViewChild('profileContainer') profileContainer!: ElementRef;
 
-  constructor() {}
+  constructor(private authService: Auth, private router: Router) {}
 
   ngOnInit() {
     const hoy = new Date();
-
+    
     const fecha = hoy.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
@@ -90,7 +99,34 @@ export class MainLayout {
     }
   }
 
-  logout(): void {
+  logout() {
     this.closeAllMenus();
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error: HttpErrorResponse | TimeoutError | Error) => {
+        if (error instanceof TimeoutError) {
+          this.logout();
+          return;
+        }
+
+        let msg = 'Ha ocurrido un error inesperado';
+        if (error instanceof HttpErrorResponse) {
+            msg = error.error?.msg || msg;
+        } else if (error instanceof Error) {
+            msg = error.message;
+        }
+
+        Swal.fire({
+            title: "Error",
+            text: msg,
+            icon: "error",
+            confirmButtonColor: "#a2aadb"
+        });
+ 
+        console.log(error);
+      }
+    });
   }
 }

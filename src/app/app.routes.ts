@@ -4,41 +4,56 @@ import { MainLayout } from './layouts/main-layout/main-layout';
 import { codeGuard } from './core/guards/code-guard';
 import { authenticatedGuard } from './core/guards/authenticated-guard';
 import { tokenGuard } from './core/guards/token-guard';
+import { hasRoleGuard } from './core/guards/has-role-guard';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainLayout,
     canActivate: [tokenGuard],
+    data: {
+      roles: ['admin'],
+    },
     children: [
       {
-        path: '',
+        path: 'home',
+        canActivate: [hasRoleGuard],
         loadComponent: () => import('./features/dashboard/pages/home/home').then((c) => c.Home),
       },
       {
         path: 'recipes',
+        canActivate: [hasRoleGuard],
         loadComponent: () =>
           import('./features/dashboard/pages/recipes/recipes').then((c) => c.Recipes),
       },
       {
         path: 'role-requests',
+        canActivate: [hasRoleGuard],
         loadComponent: () =>
           import('./features/dashboard/pages/role-request/role-request').then((c) => c.RoleRequest),
       },
       {
         path: 'users',
+        canActivate: [hasRoleGuard],
         loadComponent: () =>
           import('./features/dashboard/pages/users-list/users-list').then((c) => c.UsersList),
       },
       {
         path: 'user-profile',
+        canActivate: [hasRoleGuard],
         loadComponent: () =>
           import('./features/dashboard/pages/user-profile/user-profile').then((c) => c.UserProfile),
       },
       {
         path: 'all-notifications',
+        canActivate: [hasRoleGuard],
         loadComponent: () =>
           import('./features/dashboard/pages/all-notifications/all-notifications').then((c) => c.AllNotifications),
+      },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
       }
     ],
   },
@@ -63,5 +78,5 @@ export const routes: Routes = [
           import('./features/auth/pages/register/register').then((c) => c.Register),
       },*/
     ],
-  },
+  }
 ];

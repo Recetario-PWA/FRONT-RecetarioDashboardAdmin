@@ -5,7 +5,7 @@
   <div class="flex space-x-8 px-4">
     <div class="w-2/4">
         <div class="p-4 bg-transparent">
-            <img src="https://i.pinimg.com/736x/60/5a/66/605a6680015c6de804504e583ceb54ba.jpg" alt="Jess JH" class="w-full h-full object-cover border-5 border-[#a2aadb] rounded-full mb-2">
+            <img src="https://recetariopwa.sfo3.digitaloceanspaces.com/icons/avatarAdmin.png" alt="Jess JH" class="w-full h-full object-cover border-5 border-[#a2aadb] rounded-full mb-2">
             <div class="flex flex-col items-center text-center"> 
                 <p class="font-semibold text-[#2b2d2f]">Jess JH</p>
                 <span class="px-2 flex text-xs leading-5 font-semibold rounded-full bg-[#a2aadb] text-white my-1">
@@ -17,47 +17,49 @@
     </div>
 
     <div class="w-5/4">
-        <div class="grid grid-cols-1 gap-6">
-            <div>
-                <label class="text-sm font-medium text-gray-700">Nombre(s)</label>
-                <input type="text" placeholder="ej. Tyler" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+        <form [formGroup]="updateInfoForm">
+            <div class="grid grid-cols-1 gap-6">
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Nombre(s)</label>
+                    <input formControlName="name" type="text" placeholder="ej. Tyler" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Apellido (s)</label>
+                    <input formControlName="last_name" type="text" placeholder="ej. Joseph" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Username</label>
+                    <input formControlName="user_name" type="text" placeholder="ej. tylerrjoseph" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
+                    <input formControlName="email" type="email" placeholder="ej. prueba123@gmail.com" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                </div>
+
+                <div>
+                    <label class="text-sm font-medium text-gray-700">Género</label>
+                    <select formControlName="gender" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                        <option hidden disabled selected value="">Seleccionar</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="39 tipos de gays">39 tipos de gays🏳️‍🌈</option>
+                    </select>
+                </div>
             </div>
 
-            <div>
-                <label class="text-sm font-medium text-gray-700">Apellido (s)</label>
-                <input type="text" placeholder="ej. Joseph" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+            <div class="mt-8 grid grid-cols-2 gap-6">
+                <button (click)="confirmChanges()" type="button" class="p-2 bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
+                    Actualizar información
+                </button>
+
+                <button type="button" (click)="openModal()" class="p-2 bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
+                    Cambiar contraseña
+                </button>
             </div>
-
-            <div>
-                <label class="text-sm font-medium text-gray-700">Username</label>
-                <input type="text" placeholder="ej. tylerrjoseph" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
-            </div>
-
-            <div>
-                <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
-                <input type="email" placeholder="ej. prueba123@gmail.com" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
-            </div>
-
-            <div>
-                <label class="text-sm font-medium text-gray-700">Género</label>
-                    <select class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
-                    <option hidden disabled selected value="">Seleccionar</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                    <option value="39 tipos de gays">39 tipos de gays🏳️‍🌈</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="mt-8 grid grid-cols-2 gap-6">
-            <button (click)="confirmChanges()" type="button" class="p-2 bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
-                Actualizar información
-            </button>
-
-            <button type="button" (click)="openModal()" class="p-2 bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
-                Cambiar contraseña
-            </button>
-        </div>
+        </form>
     </div>
   </div>
 </div>
@@ -80,26 +82,69 @@
                 </button>
             </div>
 
-            <div class="p-6 max-h-[70vh] overflow-y-auto">
-                <div class="space-y-5">
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Nueva contraseña</label>
-                        <input type="password" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
-                    </div>
+            <form [formGroup]="changePasswordForm">
+                <div class="p-6 max-h-[70vh] overflow-y-auto">
+                    <div class="space-y-5">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Nueva contraseña</label>
+                            <div class="relative">
+                                <input
+                                [type]="passwordVisible() ? 'text' : 'password'"
+                                formControlName="password"
+                                class="mt-2 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] w-full py-2 pl-3 pr-10 bg-[#f1f4f6] rounded-md placeholder:font-light placeholder:text-gray-500"
+                                />
+                                <button
+                                type="button"
+                                (click)="togglePasswordVisibility()"
+                                class="absolute right-0 top-0 mt-4 mr-3 text-gray-500 hover:text-[#a2aadb] transition-colors"
+                                aria-label="Toggle password visibility"
+                                >
+                                <ng-container *ngIf="passwordVisible(); else hidePasswordIcon">
+                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye-closed"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4" /><path d="M3 15l2.5 -3.8" /><path d="M21 14.976l-2.492 -3.776" /><path d="M9 17l.5 -4" /><path d="M15 17l-.5 -4" /></svg>
+                                </ng-container>
+                                <ng-template #hidePasswordIcon>
+                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                </ng-template>
+                                </button>
+                            </div>
+                            <small class="text-muted">*Debe contener mínimo 8 caracteres, con mayúsculas, números y símbolos.</small>
+                            <app-error-messages [control]="getControl('password')" label="Este campo"></app-error-messages>
+                        </div>
 
-                    <div> 
-                        <label class="text-sm font-medium text-gray-700">Confirmar nueva contraseña</label>
-                        <input type="password" class="mt-1 block w-full py-2 px-3 rounded-md bg-[#f1f4f6] focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] placeholder:font-light placeholder:text-gray-500">
+                        <div> 
+                            <label class="text-sm font-medium text-gray-700">Confirmar nueva contraseña</label>
+                            <div class="relative">
+                                <input
+                                [type]="passwordConfirmationVisible() ? 'text' : 'password'"
+                                formControlName="password_confirmation"
+                                class="mt-2 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb] w-full py-2 pl-3 pr-10 bg-[#f1f4f6] rounded-md placeholder:font-light placeholder:text-gray-500"
+                                />
+                                <button
+                                type="button"
+                                (click)="togglePasswordConfirmationVisibility()"
+                                class="absolute right-0 top-0 mt-4 mr-3 text-gray-500 hover:text-[#a2aadb] transition-colors"
+                                aria-label="Toggle password confirmation visibility"
+                                >
+                                <ng-container *ngIf="passwordConfirmationVisible(); else hideConfirmIcon">
+                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye-closed"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4" /><path d="M3 15l2.5 -3.8" /><path d="M21 14.976l-2.492 -3.776" /><path d="M9 17l.5 -4" /><path d="M15 17l-.5 -4" /></svg>
+                                </ng-container>
+                                <ng-template #hideConfirmIcon>
+                                    <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                </ng-template>
+                                </button>
+                            </div>
+                            <small *ngIf="changePasswordForm.errors?.['noMatch'] && changePasswordForm.touched" class="text-[#A53F3F]">Las contraseñas no coinciden</small>
+                            <app-error-messages [control]="getControl('password_confirmation')" label="Este campo"></app-error-messages>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="p-4 flex justify-center space-x-3 rounded-b-lg">
-                <button type="button" class="p-3 text-sm bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
-                    Cambiar contraseña
-                </button>
-            </div>
-
+                <div class="p-4 flex justify-center space-x-3 rounded-b-lg">
+                    <button type="button" (click)="confirmPasswordChange()" class="p-3 text-sm bg-[#a2aadb] text-white font-semibold rounded-lg shadow-md hover:bg-[#8f96c1] transition duration-150">
+                        Cambiar contraseña
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

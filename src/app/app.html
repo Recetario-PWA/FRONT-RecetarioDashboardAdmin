@@ -1,1 +1,7 @@
-<router-outlet></router-outlet>
+@defer (when !loading()) {
+    <router-outlet></router-outlet>
+} @placeholder {
+    <div class="flex items-center justify-center h-screen w-screen">
+        <app-spinner></app-spinner>
+    </div>
+}

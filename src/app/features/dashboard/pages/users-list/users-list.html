@@ -2,103 +2,141 @@
   <h2 class="text-xl font-semibold text-gray-800 mb-2">Administración de usuarios</h2>
   <p class="text-sm text-gray-500 mb-8">Utiliza esta sección para la gestión completa de todos los usuarios de la plataforma. Puedes editar su rol, eliminar y actualizar su información.</p>
 
-  <div class="flex flex-wrap items-end mb-8 space-x-4">
-    <div class="flex-grow">
-        <label for="search-recipes" class="block text-xs font-medium text-[#2b2d2f] mb-2">Buscar por usuario o email</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-search"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+  @defer (when !loading()) {
+    <div class="flex flex-wrap items-end mb-8 space-x-4">
+        <div class="flex-grow">
+            <label for="search-recipes" class="block text-xs font-medium text-[#2b2d2f] mb-2">Buscar por usuario o email</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-search"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                </div>
+                <input [value]="searchBar()" (input)="searchBar.set($any($event.target).value)" type="text" id="search-recipes" name="search-recipes" placeholder="Ej. Tyler" class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
             </div>
-            <input type="text" id="search-recipes" name="search-recipes" placeholder="Ej. Tyler" class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
+        </div>
+
+        <div class="w-48">
+            <label for="filter-role" class="block text-xs font-medium text-gray-700 mb-2">Filtrar por rol</label>
+            <select [value]="roleFilter()" (change)="roleFilter.set($any($event.target).value)" id="filter-role" name="filter-role" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
+                <option value="">Todo</option>
+                <option value="admin">Administrador</option>
+                <option value="user">Chef</option>
+                <option value="guest">Visitante</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="date-start" class="block text-xs font-medium text-gray-700 mb-1">Desde</label>
+            <input [value]="dateStart()" (change)="dateStart.set($any($event.target).value)" type="date" id="date-start" name="date-start" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
+        </div>
+
+        <div>
+            <label for="date-end" class="block text-xs font-medium text-gray-700 mb-1">Hasta</label>
+            <input [min]="dateStart() || null" [value]="dateEnd()" (change)="dateEnd.set($any($event.target).value)" type="date" id="date-end" name="date-end" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
+        </div>
+
+        <div class="flex flex-wrap space-x-2">
+            <button type="button" (click)="applyDateFilter()" class="px-4 py-2 bg-[#a2aadb] text-white font-medium text-sm rounded-lg hover:bg-[#8f96c1]">
+                Filtrar
+            </button>
+
+            <button type="button" (click)="clearFilters()" class="px-4 py-2 bg-gray-200 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-300">
+                Limpiar
+            </button>
         </div>
     </div>
 
-    <div class="w-48">
-        <label for="filter-role" class="block text-xs font-medium text-gray-700 mb-2">Filtrar por rol</label>
-        <select id="filter-role" name="filter-role" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
-            <option value="">Todo</option>
-            <option value="admin">Administrador</option>
-            <option value="chef">Chef</option>
-            <option value="guest">Visitante</option>
-        </select>
+    <div class="flex space-x-8">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">USUARIO</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EMAIL</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ROL</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FECHA DE REGISTRO</th>  
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                @for (user of paginatedUsers(); track user.id) {
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-start">
+                                <img class="h-12 w-12 rounded-full border-2 border-[#a2aadb] object-cover mr-4" [src]="getIcon(user.gender)" alt="Miniatura">
+                                <div class="leading-tight">
+                                    <div class="text-sm font-medium text-gray-900">{{ user.name }} {{ user.last_name }}</div>
+                                    <div class="text-xs text-gray-500 mt-1">@{{ user.user_name }}</div> 
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-700 max-w-xs break-words">
+                            <p class="whitespace-normal leading-snug">{{ user.email }}</p>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-700 max-w-xs break-words">
+                            <ng-container [ngSwitch]="user.rol.role">
+                                <p *ngSwitchCase="'admin'" class="whitespace-normal leading-snug">Administrador</p>
+                                <p *ngSwitchCase="'user'" class="whitespace-normal leading-snug">Chef</p>
+                                <p *ngSwitchCase="'guest'" class="whitespace-normal leading-snug">Visitante</p>
+                            </ng-container>
+                        </td>
+                    <td class="px-6 py-4 text-sm text-gray-700 max-w-xs break-words">
+                            <p class="whitespace-normal leading-snug">{{ user.created_at | date: 'dd-MMMM-yyyy hh:mm a' | titlecase }}</p>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <a (click)="confirmDeleteUser()" class="text-[#a53f3f] hover:text-[#8e3535] cursor-pointer">Eliminar</a>
+                        </td>
+                    </tr>
+                } @empty {
+                    @if (users().length === 0) {
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-gray-500 font-medium">
+                                No hay usuarios
+                            </td>
+                        </tr>
+                    } @else {
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-gray-500 font-medium">
+                                No encontramos coincidencias
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
     </div>
 
-    <div>
-        <label for="date-start" class="block text-xs font-medium text-gray-700 mb-1">Desde</label>
-        <input type="date" id="date-start" name="date-start" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
-    </div>
-
-    <div>
-        <label for="date-end" class="block text-xs font-medium text-gray-700 mb-1">Hasta</label>
-        <input type="date" id="date-end" name="date-end" class="block w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#a2aadb] focus:border-[#a2aadb]">
-    </div>
-
-    <button class="px-4 py-2 bg-[#a2aadb] text-white font-medium text-sm rounded-lg hover:bg-[#8f96c1]">
-        Filtrar
-    </button>
-  </div>
-
-  <div class="flex space-x-8">
-    <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">USUARIO</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EMAIL</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ROL</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">FECHA DE REGISTRO</th>  
-                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ACCIONES</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-            <tr>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <img class="h-12 w-12 rounded-full border-2 border-[#a2aadb] object-cover mr-4" src="https://recetariopwa.sfo3.digitaloceanspaces.com/brownis.jpeg" alt="Miniatura">
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">Jessica Juarez</div>
-                            <div class="text-xs text-gray-500 mt-1">@iceli</div> 
-                        </div>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ejemplo@correo.com</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Admin</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10-Octubre-2025</td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a (click)="confirmDeleteUser()" class="text-[#a53f3f] hover:text-[#8e3535] cursor-pointer">Eliminar</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-  </div>
-
-  <div class="mt-8 px-6 py-4 flex items-center justify-between border-t border-gray-200 bg-white sm:px-0">
+    <div class="mt-8 px-6 py-4 flex items-center justify-between border-t border-gray-200 bg-white sm:px-0">
         <div>
             <p class="text-sm text-gray-700">
                 Mostrando
-                <span class="font-medium">1</span>
+                <span class="font-medium">{{ startIndex() }}</span>
                 a
-                <span class="font-medium">10</span>
+                <span class="font-medium">{{ endIndex() }}</span>
                 de
-                <span class="font-medium">97</span>
+                <span class="font-medium">{{ filteredUsers().length }}</span>
                 resultados
             </p>
         </div>
 
-        <div class="flex-1 flex justify-end">
+        <div class="flex-1 flex justify-end" *ngIf="totalPages() > 1">
             
-            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-l-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50">
+            <button [disabled]="p() === 1" (click)="goToPage(p() - 1)" class="relative cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-l-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50">
                 Anterior
-            </a>
+            </button>
             
             <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                <a href="#" aria-current="page" class="z-10 bg-[#e0e3f2] border-[#a2aadb] text-[#a2aadb] relative inline-flex items-center px-4 py-2 border text-sm font-medium">1</a>
-                <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
-                <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">3</a>
+                <ng-container *ngFor="let i of [].constructor(totalPages()); let idx = index">
+                    <a (click)="goToPage(idx + 1)" [ngClass]="{'bg-[#e0e3f2] border-[#a2aadb] text-[#a2aadb] z-10': p() === idx + 1, 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50': p() !== idx + 1}" class="relative inline-flex items-center px-4 py-2 border text-sm font-medium cursor-pointer">
+                        {{ idx + 1 }}
+                    </a>
+                </ng-container>
             </nav>
             
-            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-white hover:bg-gray-50">
+            <button (click)="goToPage(p() + 1)" [disabled]="p() === totalPages()" class="relative cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50">
                 Siguiente
-            </a>
+            </button>
         </div>
     </div>
+  } @placeholder {
+    <app-spinner></app-spinner>
+  }
 </div>

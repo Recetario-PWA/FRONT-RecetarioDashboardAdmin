@@ -7,6 +7,7 @@ import { Auth } from '../../../../core/services/auth';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { take, TimeoutError } from 'rxjs';
+import { PushService } from '../../../../core/services/push';
 
 @Component({
   selector: 'app-auth-code',
@@ -22,7 +23,7 @@ export class AuthCode {
   loading = signal(false);
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>; 
 
-  constructor(private authService: Auth, private router: Router) {}
+  constructor(private authService: Auth, private router: Router, private pushNotifications: PushService) {}
 
   ngOnInit(): void {
     const email = codeEmail();
@@ -83,6 +84,9 @@ export class AuthCode {
           
             this.authService.getUserInfo().subscribe(user => {
               if (user.data.rol.role === "admin") {
+                if (user?.data?.id) {
+                  this.pushNotifications.init(user.data.id.toString());
+                }
                 setTimeout(() => {
                   this.clearCodeInputs();
                   this.router.navigate(['/']);

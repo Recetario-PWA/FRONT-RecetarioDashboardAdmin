@@ -11,6 +11,7 @@ import { isPlatformBrowser } from '@angular/common';
 export class Auth {
   private baseUrl: string;
   private token: string | null = null;
+  private role: string | null = null;
   private isBrowser: boolean;
 
   constructor(private httpClient: HttpClient, @Inject(PLATFORM_ID) private platformId: Object){
@@ -56,18 +57,25 @@ export class Auth {
       tap({
         next: (response) => {
           if (response.result) {
+            this.role = response.data.rol.role;
             currentUser.set(response.data);
           } else {
+            this.role = null
             currentUser.set(null);
           }
           userInfoLoading.set(false);
         },
         error: () => {
           currentUser.set(null);
+          this.role = null;
           userInfoLoading.set(false);
         }
       })
     );
+  }
+
+  getRole() {
+    return this.role;
   }
 
   resendCode(email: any): Observable<any> {

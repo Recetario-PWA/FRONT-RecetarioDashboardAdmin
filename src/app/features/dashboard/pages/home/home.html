@@ -3,20 +3,28 @@
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Solicitudes recientes para cambio de rol</h2>
         <div class="flex flex-col space-y-4">
             <!-- CARDS -->
-            <div class="bg-white p-4 rounded-xl shadow-lg w-full flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <img class="h-12 w-12 rounded-full object-cover border-2 border-[#a2aadb]" src="https://i.pinimg.com/736x/60/5a/66/605a6680015c6de804504e583ceb54ba.jpg" alt="Foto de Perfil">
-                    <div>
-                        <p class="font-semibold text-gray-800">User</p>
-                        <small class="text-xs text-gray-500">Solicitado: 10 octubre 2025</small>
+            @defer (when !loadingRequests()) {
+                @for (request of requests(); track request.id) {
+                    <div class="bg-white p-4 rounded-xl shadow-lg w-full flex justify-between items-center">
+                        <div class="flex items-center space-x-3">
+                            <img class="h-12 w-12 rounded-full object-cover border-2 border-[#a2aadb]" [src]="getIcon(request.user?.gender)" alt="Foto de Perfil">
+                            <div>
+                                <p class="font-semibold text-gray-800">{{ request.user.name }} {{ request.user.last_name }} | @{{ request.user.user_name }}</p>
+                                <small class="text-xs text-gray-500">Solicitado: {{ request.created_at | date: 'dd-MMMM-yyyy hh:mm a' | titlecase }}</small>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" (click)="changeRole(request.id)" [disabled]="sendingRequest()" class="px-5 py-2 text-sm font-medium text-white bg-[#a2aadb] rounded-lg hover:bg-[#8e99b7] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#a2aadb]">
+                                Aceptar
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <button class="px-5 py-2 text-sm font-medium text-white bg-[#a2aadb] rounded-lg hover:bg-[#8e99b7]">
-                        Aceptar
-                    </button>
-                </div>
-            </div>
+                } @empty {
+                    <div class="w-full flex px-20 items-center py-4"> <h4 class="text-center">No hay solicitudes recientes</h4> </div>
+                }
+            } @placeholder {
+                <app-spinner2></app-spinner2>
+            }
         </div>
     </div>
 
@@ -25,40 +33,47 @@
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Recetas agregadas recientemente</h2>
         <div class="flex flex-col space-y-4">
             <!-- CARDS --> 
-            <div class="w-full bg-white rounded-xl shadow-lg overflow-hidden md:flex">
-                <div class="md:shrink-0">
-                    <img class="h-24 w-full object-cover md:h-full md:w-28" src="https://recetariopwa.sfo3.digitaloceanspaces.com/brownis.jpeg" alt="Pastel de Chocolate">
-                </div>
-                <div class="p-4 flex flex-col justify-between w-full"> 
-                    <h4 class="block text-lg leading-tight font-semibold text-gray-800 mb-1">
-                        Pastel de chocolate
-                    </h4>
-                    <div class="flex items-center space-x-1 text-sm text-gray-600 mb-3">
-                        <img src="https://i.pinimg.com/736x/60/5a/66/605a6680015c6de804504e583ceb54ba.jpg" alt="Avatar" class="h-5 w-5 rounded-full object-cover border-[1.5px] border-[#a2aadb]">
-                        <span class="font-medium">User</span>
+            @defer (when !loadingRecipes()) {
+                @for (recipe of recipes(); track recipe.id) {
+                    <div class="w-full bg-white rounded-xl shadow-lg overflow-hidden md:flex">
+                        <div class="md:shrink-0">
+                            <img class="h-32 w-32 object-cover " [src]="recipe.image_path" alt="Imagen receta">
+                        </div>
+                        <div class="p-4 flex flex-col justify-between w-full"> 
+                            <h4 class="block text-lg leading-tight font-semibold text-gray-800 mb-1">
+                                {{ recipe.title }}
+                            </h4>
+                            <div class="flex items-center space-x-1 text-sm text-gray-600 mb-3">
+                                <img [src]="getIcon(recipe.user?.gender)" alt="Avatar" class="h-5 w-5 rounded-full object-cover border-[1.5px] border-[#a2aadb]">
+                                <span class="font-medium">{{ recipe.user.user_name }}</span>
+                            </div>
+                            <hr class="my-2 border-t border-gray-100">
+                            <div class="flex items-center space-x-6 text-sm text-gray-600">
+                                <div class="flex items-center space-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6f73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 12h3.5" /><path d="M12 7v5" /></svg>
+                                    <span class="font-medium text-gray-800">{{ recipe.prep_time?.replace(' min', '') }}</span>
+                                    <span class="text-gray-600">min</span>
+                                </div>
+                                
+                                <div class="flex items-center space-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#f5d86e" class="icon icon-tabler icons-tabler-filled icon-tabler-carambola"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17.108 22.085c-1.266 -.068 -2.924 -.859 -5.071 -2.355l-.04 -.027l-.037 .027c-2.147 1.497 -3.804 2.288 -5.072 2.356l-.178 .005c-2.747 0 -3.097 -2.64 -1.718 -7.244l.054 -.178l-.1 -.075c-6.056 -4.638 -5.046 -7.848 2.554 -8.066l.202 -.005l.115 -.326c1.184 -3.33 2.426 -5.085 4.027 -5.192l.156 -.005c1.674 0 2.957 1.76 4.182 5.197l.114 .326l.204 .005c7.6 .218 8.61 3.428 2.553 8.065l-.102 .075l.055 .178c1.35 4.512 1.04 7.137 -1.556 7.24l-.163 .003z" /></svg>
+                                    <span class="font-medium text-gray-800">{{ recipe.averageScore }}</span>
+                                </div>
+                                
+                                <div class="flex items-center space-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6f73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-tools-kitchen-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v17m-3 -17v3a3 3 0 1 0 6 0v-3" /><path d="M17 8m-3 0a3 4 0 1 0 6 0a3 4 0 1 0 -6 0" /><path d="M17 12v9" /></svg>
+                                    <span class="font-medium text-gray-800">{{ recipe.servings }}</span>
+                                    <span class="text-gray-600">porciones</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <hr class="my-2 border-t border-gray-100">
-                    <div class="flex items-center space-x-6 text-sm text-gray-600">
-                        <div class="flex items-center space-x-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6f73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-clock-hour-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 12h3.5" /><path d="M12 7v5" /></svg>
-                            <span class="font-medium text-gray-800">45</span>
-                            <span class="text-gray-600">min</span>
-                        </div>
-                        
-                        <div class="flex items-center space-x-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#f5d86e" class="icon icon-tabler icons-tabler-filled icon-tabler-carambola"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17.108 22.085c-1.266 -.068 -2.924 -.859 -5.071 -2.355l-.04 -.027l-.037 .027c-2.147 1.497 -3.804 2.288 -5.072 2.356l-.178 .005c-2.747 0 -3.097 -2.64 -1.718 -7.244l.054 -.178l-.1 -.075c-6.056 -4.638 -5.046 -7.848 2.554 -8.066l.202 -.005l.115 -.326c1.184 -3.33 2.426 -5.085 4.027 -5.192l.156 -.005c1.674 0 2.957 1.76 4.182 5.197l.114 .326l.204 .005c7.6 .218 8.61 3.428 2.553 8.065l-.102 .075l.055 .178c1.35 4.512 1.04 7.137 -1.556 7.24l-.163 .003z" /></svg>
-                            <span class="font-medium text-gray-800">4.8</span>
-                        </div>
-                        
-                        <div class="flex items-center space-x-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6f73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-tools-kitchen-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4v17m-3 -17v3a3 3 0 1 0 6 0v-3" /><path d="M17 8m-3 0a3 4 0 1 0 6 0a3 4 0 1 0 -6 0" /><path d="M17 12v9" /></svg>
-                            <span class="font-medium text-gray-800">4</span>
-                            <span class="text-gray-600">porciones</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
+                } @empty {
+                    <div class="w-full flex px-20 items-center py-4"> <h4 class="text-center">No hay recetas recientes</h4> </div>
+                }
+            } @placeholder {
+                <app-spinner2></app-spinner2>
+            }
         </div>
     </div>
 
