@@ -165,12 +165,12 @@ export class RoleRequest {
         if (response.result) {
           roleRequest.set(response.data);
         } else {
-          roleRequest.set(null);
+          roleRequest.set([]);
         }
         this.loading.set(false);
       },
       error: (error) => {
-        roleRequest.set(null);
+        roleRequest.set([]);
         this.loading.set(false);
         console.log(error);
       }

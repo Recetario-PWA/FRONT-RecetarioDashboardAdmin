@@ -207,10 +207,13 @@ export class Recipes {
 
           allRecipes.set(recipesWithScore);
           this.loading.set(false);
+        } else {
+          allRecipes.set([]);
         }
       },
       error: (error) => {
         this.loading.set(false);
+        allRecipes.set([]);
       }
     });
   }

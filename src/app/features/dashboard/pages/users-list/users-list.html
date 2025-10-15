@@ -82,7 +82,7 @@
                             <p class="whitespace-normal leading-snug">{{ user.created_at | date: 'dd-MMMM-yyyy hh:mm a' | titlecase }}</p>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <a (click)="confirmDeleteUser()" class="text-[#a53f3f] hover:text-[#8e3535] cursor-pointer">Eliminar</a>
+                            <a (click)="confirmDeleteUser(user.id)" class="text-[#a53f3f] hover:text-[#8e3535] cursor-pointer">Eliminar</a>
                         </td>
                     </tr>
                 } @empty {

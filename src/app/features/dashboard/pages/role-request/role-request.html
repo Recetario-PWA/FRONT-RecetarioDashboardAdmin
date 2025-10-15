@@ -95,7 +95,7 @@
                             </td>
                         </tr>
                     } @empty {
-                        @if (requests().length === 0) {
+                        @if (requests().length === 0 || requests() === null) {
                             <tr>
                                 <td colspan="5" class="py-10 text-center text-gray-500 font-medium">
                                     No hay solicitudes

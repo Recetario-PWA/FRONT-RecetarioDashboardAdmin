@@ -5,7 +5,8 @@ import Swal from 'sweetalert2';
 import { allUsersList } from '../../../../core/stores/users.store';
 import { Spinner } from '../../../../shared/components/spinner/spinner';
 import { UsersService } from '../../../../core/services/users';
-import { take, timeout } from 'rxjs';
+import { take, timeout, TimeoutError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-users-list',
@@ -17,6 +18,7 @@ import { take, timeout } from 'rxjs';
 export class UsersList {
   users = computed(() => allUsersList());
   loading = signal(true);
+  sending = signal(false);
 
   // ICONOS
   icons: Record<string, string> = {
@@ -171,19 +173,77 @@ export class UsersList {
         if (response.result) {
           allUsersList.set(response.data);
         } else {
-          allUsersList.set(null);
+          allUsersList.set([]);
         }
         this.loading.set(false);
       },
       error: (error) => {
-        allUsersList.set(null);
+        allUsersList.set([]);
         this.loading.set(false);
         console.log(error);
       }
     });
   }
 
-  confirmDeleteUser() {
+  deleteUser(id: any) {
+    this.sending.apply(true);
+
+    this.userService.deleteUser(id).pipe(timeout(15000), take(1)).subscribe({
+      next: (response) => {
+        if (response.result) {
+          if (response.result) {
+            Swal.fire({
+              title: 'Usuario eliminado!',
+              icon: 'success',
+              confirmButtonColor: "#a2aadb",
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.getAllUsers();
+                this.sending.set(false);
+              }
+            });
+          }
+        }
+      },
+      error: (error: HttpErrorResponse | TimeoutError) => {
+        if (error instanceof TimeoutError) {
+          this.deleteUser(id);
+          return;
+        }
+
+        const httpError = error as HttpErrorResponse;
+
+        const serverMsg = httpError.error?.msg || 'Ha ocurrido un error inesperado. (Error 404/500)';
+        const data = httpError.error?.data as Record<string, any> | undefined;
+
+        let htmlMsg = '';
+
+        if (data) {
+          const validationMessages = ([] as string[]).concat(
+            ...Object.values(data)
+          );
+
+          if (validationMessages.length > 0) {
+            htmlMsg = validationMessages.map(err => `* ${err}`).join('<br>');
+          }
+        }
+
+        Swal.fire({
+          title: 'Error',
+          html: htmlMsg || serverMsg,
+          icon: 'error',
+          confirmButtonColor: "#a2aadb",
+          confirmButtonText: 'Aceptar'
+        });
+
+        //console.log(error);
+        this.sending.set(false);
+      }
+    });
+  }
+
+  confirmDeleteUser(id: any) {
     Swal.fire({
       title: "¿Estas seguro de eliminar a este usuario?",
       icon: "warning",
@@ -194,7 +254,7 @@ export class UsersList {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-         console.log("Usuario eliminado");
+        this.deleteUser(id);
       }
     });
   }

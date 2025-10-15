@@ -21,6 +21,7 @@ export class AuthCode {
   code: string[] = ['', '', '', '', '']; 
   codeDigits = Array(5).fill(0);
   loading = signal(false);
+  sending = signal(false);
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>; 
 
   constructor(private authService: Auth, private router: Router, private pushNotifications: PushService) {}
@@ -75,6 +76,7 @@ export class AuthCode {
 
   onSubmit(): void {
     const fullCode = this.code.join('');
+    this.loading.set(true);
 
     if (fullCode.length === this.code.length){
       this.authService.verifyCode(this.email, fullCode).subscribe({
@@ -100,6 +102,7 @@ export class AuthCode {
                   confirmButtonColor: "#a2aadb",
                   confirmButtonText: 'Aceptar'
                 }).then(() => {
+                  this.loading.set(false);
                   this.router.navigate(['/login']);
                 });
               }
@@ -142,12 +145,19 @@ export class AuthCode {
         }
       });
     } else {
-      
+      Swal.fire({
+          title: 'Error',
+          html: 'Código incompleto',
+          icon: 'error',
+          confirmButtonColor: "#a2aadb",
+          confirmButtonText: 'Aceptar'
+      });
     }
   }
 
   resendCode() { 
-    console.log('resendCode', this.email);
+    this.sending.set(true);
+
     this.authService.resendCode(this.email).pipe(take(1)).subscribe({
       next: (response) => { 
         Swal.fire({
@@ -157,6 +167,7 @@ export class AuthCode {
           confirmButtonColor: "#a2aadb",
           confirmButtonText: 'Aceptar'
         }).then(() => {
+          this.sending.set(false);
           this.clearCodeInputs();
         });
       },
@@ -185,6 +196,8 @@ export class AuthCode {
           confirmButtonColor: "#a2aadb",
           confirmButtonText: 'Aceptar'
         });
+
+        this.sending.set(false);
       }
     });
   }

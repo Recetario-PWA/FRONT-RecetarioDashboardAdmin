@@ -78,4 +78,8 @@ export class UsersService {
   markAllAsRead(): Observable<any> {
     return this.http.post(`${environment.apiUrlBase}notifications/read-all`, {});
   }
+
+  deleteUser(id: any): Observable<any> {
+    return this.http.delete(`${this.baseUrl}${id}`);
+  }
 }

@@ -26,14 +26,14 @@
                     </ng-container>
                 </div>
 
-                <button type="submit" class="w-full font-bold bg-[#a2aadb] text-white p-2 rounded-lg hover:bg-[#8f96c1]">
+                <button type="submit" [disabled]="loading()" class="w-full font-bold bg-[#a2aadb] text-white p-2 rounded-lg hover:bg-[#8f96c1] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#a2aadb]">
                     Verificar
                 </button>
             </form>
             
             <div class="mt-6 text-center text-[#2b2d2f]">
                 ¿No recibiste ningún código?
-                <a (click)="resendCode()" class="font-bold text-[#a2aadb] cursor-pointer">Solicitar nuevo código</a>
+                <button (click)="resendCode()" [disabled]="loading() || sending()" class="font-bold text-[#a2aadb] cursor-pointer">Solicitar nuevo código</button>
             </div>
         </div>
         <div class="relative">

@@ -5,6 +5,8 @@ import { Auth } from './auth';
 import { UsersService } from './users';
 import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
+import { take, timeout } from 'rxjs';
+import { roleRequest } from '../stores/users.store';
 
 @Injectable({
   providedIn: 'root'
@@ -58,6 +60,7 @@ export class Notifications {
       this.zone.run(() => {
         //console.log('📩 Evento recibido desde Pusher:', event);
         this.userService.getNotifications();
+        this.getAllRequest();
         const message = `${event.user.user_name} solicito cambio de rol "${event.comment}"`;
         this.mostrarNotificacion(message);
       });
@@ -76,6 +79,22 @@ export class Notifications {
         toast.addEventListener('mouseenter', Swal.stopTimer);
         toast.addEventListener('mouseleave', Swal.resumeTimer);
       },
+    });
+  }
+
+  getAllRequest() {
+    this.userService.getAllRolRequest().pipe(timeout(15000), take(1)).subscribe({
+      next: (response) => {
+        if (response.result) {
+          roleRequest.set(response.data);
+        } else {
+          roleRequest.set([]);
+        }
+      },
+      error: (error) => {
+        roleRequest.set([]);
+        console.log(error);
+      }
     });
   }
 }
