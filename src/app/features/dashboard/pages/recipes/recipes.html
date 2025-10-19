@@ -187,12 +187,14 @@
                         <div class="md:w-1/2">
                             <h4 class="text-lg font-semibold text-gray-800 mb-4">Preparación</h4>
                             <div class="space-y-4">
-                                <div class="flex items-start space-x-3" *ngFor="let step of instructionsList()">
-                                    <div class="flex-shrink-0 w-6 h-6 rounded-full bg-[#a2aadb] flex items-center justify-center text-xs font-semibold text-white">1</div>
-                                    <p class="text-base text-gray-700">
-                                        {{ capitalize(step) }}.
-                                    </p>
-                                </div>
+                                @for (step of instructionsList(); track $index; let i = $index) {
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-[#a2aadb] flex items-center justify-center text-xs font-semibold text-white">{{ i + 1 }}</div>
+                                        <p class="text-base text-gray-700">
+                                            {{ capitalize(step) }}.
+                                        </p>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
