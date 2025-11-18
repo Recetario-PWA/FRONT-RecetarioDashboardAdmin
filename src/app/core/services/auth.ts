@@ -31,6 +31,14 @@ export class Auth {
     return this.httpClient.post(`${this.baseUrl}code`, { email: email, code: code });
   }
 
+  verifyCodeWithOutEmail(email: any, code: any): Observable<any> {
+    return this.httpClient.put(`${this.baseUrl}verify-code`, { email: email, code: code });
+  }
+
+  recoveryAccount(recoveryData: any): Observable<any> {
+    return this.httpClient.put(`${this.baseUrl}change-password`, recoveryData);
+  }
+
   saveToken(token: string) {
     if (this.isBrowser) {
       localStorage.setItem('auth_token', token);

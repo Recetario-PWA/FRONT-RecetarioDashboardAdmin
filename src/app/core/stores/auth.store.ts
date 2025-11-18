@@ -12,3 +12,5 @@ export const hasUnreadNotifications = signal<any>(null);
 export const notificationsLoading = signal<boolean>(false);
 
 export const codeEmail = signal<string | null>(null);
+
+export const entryPoint  = signal<string | null>(null);

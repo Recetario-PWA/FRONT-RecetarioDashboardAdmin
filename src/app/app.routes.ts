@@ -72,6 +72,17 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/auth/pages/auth-code/auth-code').then((c) => c.AuthCode),
       },
+      {
+        path: 'recovery-account',
+        loadComponent: () =>
+          import('./features/auth/pages/recovery-account/recovery-account').then((c) => c.RecoveryAccount),
+      },
+      {
+        path: 'change-password',
+        canActivate: [codeGuard],
+        loadComponent: () =>
+          import('./features/auth/pages/change-password/change-password').then((c) => c.ChangePassword),
+      },
       /*{
         path: 'register',
         loadComponent: () =>

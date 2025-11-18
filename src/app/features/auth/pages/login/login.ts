@@ -4,7 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModu
 import { CommonModule } from '@angular/common';
 import { ErrorMessagesComponent } from '../../../../shared/components/error-messages/error-messages.component';
 import { Auth } from '../../../../core/services/auth';
-import { codeEmail } from '../../../../core/stores/auth.store';
+import { codeEmail, entryPoint } from '../../../../core/stores/auth.store';
 import { timeout, TimeoutError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
@@ -29,7 +29,7 @@ export class Login {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   getControl(name: string): AbstractControl {
     return this.loginForm.controls[name];
@@ -56,6 +56,7 @@ export class Login {
     this.authService.login(userData).pipe(timeout(15000)).subscribe({
       next: async (response) => {
         codeEmail.set(userData.email);
+        entryPoint.set('login');
         
         if (response.result) {
           Swal.fire({

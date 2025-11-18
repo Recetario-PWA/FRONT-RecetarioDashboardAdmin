@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, QueryList, signal, ViewChildren } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { codeEmail } from '../../../../core/stores/auth.store';
+import { codeEmail, entryPoint } from '../../../../core/stores/auth.store';
 import { Auth } from '../../../../core/services/auth';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
@@ -18,6 +18,7 @@ import { PushService } from '../../../../core/services/push';
 })
 export class AuthCode {
   email!: any;
+  isLogin: boolean = false;
   code: string[] = ['', '', '', '', '']; 
   codeDigits = Array(5).fill(0);
   loading = signal(false);
@@ -28,9 +29,15 @@ export class AuthCode {
 
   ngOnInit(): void {
     const email = codeEmail();
-
     this.email = email;
-    codeEmail.set(null);
+
+    if(entryPoint() !== 'recovery-account'){
+      this.isLogin = true;
+      codeEmail.set(null);
+    } else {
+      this.isLogin = false;
+    }
+    entryPoint.set(null);
   }
 
   onInputChange(index: number, event: Event): void {
@@ -79,7 +86,8 @@ export class AuthCode {
     this.loading.set(true);
 
     if (fullCode.length === this.code.length){
-      this.authService.verifyCode(this.email, fullCode).subscribe({
+      if(this.isLogin){
+        this.authService.verifyCode(this.email, fullCode).subscribe({
         next: (response) => {
           if (response.result) {
             this.authService.saveToken(response.data.token);
@@ -94,6 +102,8 @@ export class AuthCode {
                   this.router.navigate(['/']);
                 });
               } else {
+                localStorage.removeItem('auth_token');
+
                 this.clearCodeInputs();
                 Swal.fire({
                   title: 'Error',
@@ -143,7 +153,55 @@ export class AuthCode {
           this.clearCodeInputs();
           this.loading.set(false);
         }
-      });
+        });
+      } else {
+        
+        this.authService.verifyCodeWithOutEmail(this.email, fullCode).subscribe({
+        next: (response) => {
+          if (response.result) {
+            setTimeout(() => {
+              this.clearCodeInputs();
+              this.router.navigate(['/change-password']);
+            });
+          }
+        },
+        error: (error: HttpErrorResponse | TimeoutError) => {
+          if (error instanceof TimeoutError) {
+            this.onSubmit();
+            return;
+          }
+
+          const httpError = error as HttpErrorResponse;
+
+          const serverMsg = httpError.error?.msg || 'Ha ocurrido un error inesperado. (Error 404/500)';
+          const data = httpError.error?.data as Record<string, any> | undefined;
+
+          let htmlMsg = '';
+
+          if (data) {
+            const validationMessages = ([] as string[]).concat(
+              ...Object.values(data)
+            );
+
+            if (validationMessages.length > 0) {
+              htmlMsg = validationMessages.map(err => `* ${err}`).join('<br>');
+            }
+          }
+
+          Swal.fire({
+            title: 'Error',
+            html: htmlMsg || serverMsg,
+            icon: 'error',
+            confirmButtonColor: "#a2aadb",
+            confirmButtonText: 'Aceptar'
+          });
+
+          this.clearCodeInputs();
+          this.loading.set(false);
+        }
+        });
+      }
+
     } else {
       Swal.fire({
           title: 'Error',
@@ -153,6 +211,8 @@ export class AuthCode {
           confirmButtonText: 'Aceptar'
       });
     }
+    this.loading.set(false);
+
   }
 
   resendCode() { 
