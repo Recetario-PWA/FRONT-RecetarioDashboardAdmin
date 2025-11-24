@@ -8,10 +8,11 @@ import { codeEmail, entryPoint } from '../../../../core/stores/auth.store';
 import { timeout, TimeoutError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { NgxCaptchaModule } from 'ngx-captcha';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule, ErrorMessagesComponent],
+  imports: [CommonModule, NgxCaptchaModule, RouterModule, ReactiveFormsModule, FormsModule, ErrorMessagesComponent],
   templateUrl: './login.html',
   styleUrl: './login.css',
   standalone: true,
@@ -21,11 +22,14 @@ export class Login {
   loading = signal(false);
   passwordVisible = signal(false);
   passwordConfirmationVisible = signal(false);
+  siteKey = "6LelfhYsAAAAAHY7NKC7D6fLfh9b_OSEdI5_jEsc";
+  lang = 'es-419';
 
   constructor(private fb: FormBuilder, private router: Router, private authService: Auth) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email, Validators.pattern('.+@[A-Za-z]+[.][A-Za-z]+(?:\.[A-Za-z]{2,})*'), Validators.maxLength(254)]],
-      password: ['', [Validators.required]]      
+      password: ['', [Validators.required]],
+      captcha: ['', [Validators.required]]      
     });
   }
 

@@ -33,6 +33,15 @@
               </div>
               <app-error-messages [control]="getControl('password')" label="Este campo"></app-error-messages>
             </div>
+
+             <div class="py-4">
+                <ngx-recaptcha2
+                  [siteKey]="siteKey"
+                  formControlName="captcha"
+                  [hl]="lang">
+                </ngx-recaptcha2>
+             </div>
+
             <button [disabled]="loading()" type="submit" class="mt-4 w-full font-bold bg-[#a2aadb] text-white p-2 rounded-lg mb-6 hover:bg-[#8f96c1] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#a2aadb]">
                 Iniciar sesión
             </button>
