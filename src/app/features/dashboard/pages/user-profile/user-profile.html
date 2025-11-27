@@ -5,13 +5,13 @@
   <div class="flex space-x-8 px-4">
     <div class="w-2/4">
         <div class="p-4 bg-transparent">
-            <img src="https://recetariopwa.sfo3.digitaloceanspaces.com/icons/avatarAdmin.png" alt="Jess JH" class="w-full h-full object-cover border-5 border-[#a2aadb] rounded-full mb-2">
+            <img src="https://recetariopwa.sfo3.digitaloceanspaces.com/icons/hombre-de-pan-de-jengibre.png" alt="Avatar" class="w-full h-full object-cover border-5 border-[#a2aadb] rounded-full mb-2">
             <div class="flex flex-col items-center text-center"> 
-                <p class="font-semibold text-[#2b2d2f]">Jess JH</p>
+                <p class="font-semibold text-[#2b2d2f]">{{ user().name }} {{ user().last_name }}</p>
                 <span class="px-2 flex text-xs leading-5 font-semibold rounded-full bg-[#a2aadb] text-white my-1">
                     Admin
                 </span>
-                <small class="text-xs text-gray-500">@Iceli</small> 
+                <small class="text-xs text-gray-500">@{{ user().user_name}}</small> 
             </div>
         </div>
     </div>
