@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators  } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,7 @@ import { codeEmail, entryPoint } from '../../../../core/stores/auth.store';
 import { timeout, TimeoutError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
-import { NgxCaptchaModule } from 'ngx-captcha';
+import { NgxCaptchaModule, ReCaptcha2Component } from 'ngx-captcha';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +24,8 @@ export class Login {
   passwordConfirmationVisible = signal(false);
   siteKey = "6LelfhYsAAAAAHY7NKC7D6fLfh9b_OSEdI5_jEsc";
   lang = 'es-419';
+
+  @ViewChild(ReCaptcha2Component) recaptchaComponent!: ReCaptcha2Component;
 
   constructor(private fb: FormBuilder, private router: Router, private authService: Auth) {
     this.loginForm = this.fb.group({
@@ -79,6 +81,7 @@ export class Login {
         }
       },
       error: (error: HttpErrorResponse | TimeoutError) => {
+        this.recaptchaComponent.resetCaptcha();
         if (error instanceof TimeoutError) {
           this.onSubmit();
           return;
