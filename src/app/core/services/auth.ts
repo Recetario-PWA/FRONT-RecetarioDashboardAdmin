@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable, tap } from 'rxjs';
+import { from, Observable, switchMap, tap } from 'rxjs';
 import { currentUser, userInfoLoading } from '../stores/auth.store';
 import { isPlatformBrowser } from '@angular/common';
+import { PushService } from './push';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class Auth {
   private role: string | null = null;
   private isBrowser: boolean;
 
-  constructor(private httpClient: HttpClient, @Inject(PLATFORM_ID) private platformId: Object){
+  constructor(private httpClient: HttpClient, @Inject(PLATFORM_ID) private platformId: Object, private push: PushService){
     this.baseUrl = `${environment.apiUrlBase}auth/`;
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
@@ -92,6 +93,9 @@ export class Auth {
 
   logout(): Observable<any> {
     return this.httpClient.post(`${this.baseUrl}logout`, '').pipe(
+      switchMap(() =>
+        from(this.push.clear())
+      ),
       tap(() => {
         if (this.isBrowser) {
           localStorage.removeItem('auth_token');

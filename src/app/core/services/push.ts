@@ -55,4 +55,15 @@ export class PushService {
       console.error('❌ Error inicializando Beams:', error);
     }
   }
+
+  public async clear() {
+    try {
+      if (this.beamsClient) {
+        await this.beamsClient.clearAllState();
+        console.log('🧹 Pusher Beams limpiado correctamente');
+      }
+    } catch (error) {
+      console.error('❌ Error limpiando Beams:', error);
+    }
+  }
 }
